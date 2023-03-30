@@ -15,8 +15,20 @@ protected:
     CBase*              m_pParent;
     std::vector<CBase*> m_vecChildren;
 public:
-    [[nodiscard]] std::string GetName() const;
-    [[nodiscard]] bool SetName(const std::string& sName);
+    CBase(CBase* pParent,const std::string& sName = "BaseObject");
+
+
+    [[nodiscard]] std::string GetName()                                              const;
+    [[nodiscard]] CBase*      GetParent()                                            const;
+    [[nodiscard]] CBase*      GetChildByName(const std::string& sChildName)          const;
+    [[nodiscard]] CBase*      BrowseTree(const std::string& sName, CBase* pObj) const;
+
+    [[nodiscard]] bool        SetName(const std::string& sName);
+    [[nodiscard]] bool        IsRoot() const;
+    void PrintInLine() const;
+    ~CBase();
+private:
+    void PrintInLine(const CBase* pObj) const;
 };
 
 

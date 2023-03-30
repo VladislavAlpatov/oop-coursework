@@ -1,7 +1,10 @@
 #include <iostream>
+#include "CApplication.h"
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
+    auto app = CApplication(nullptr);
+    app.BuildTree();
+    app.ExecApp();
     return 0;
 }
