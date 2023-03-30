@@ -21,14 +21,16 @@ public:
     [[nodiscard]] std::string GetName()                                              const;
     [[nodiscard]] CBase*      GetParent()                                            const;
     [[nodiscard]] CBase*      GetChildByName(const std::string& sChildName)          const;
-    [[nodiscard]] CBase*      BrowseTree(const std::string& sName, CBase* pObj) const;
+    [[nodiscard]] CBase*      BrowseTree(const std::string& sName, CBase* pObj)      const;
 
     [[nodiscard]] bool        SetName(const std::string& sName);
     [[nodiscard]] bool        IsRoot() const;
-    void PrintInLine() const;
+    void PrintInLine()                  const;
+    void PrintMultyLine()               const;
     ~CBase();
 private:
     void PrintInLine(const CBase* pObj) const;
+    void PrintMultyLine(size_t depth)   const;
 };
 
 

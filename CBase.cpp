@@ -86,3 +86,16 @@ bool CBase::IsRoot() const
 {
     return !m_pParent;
 }
+
+void CBase::PrintMultyLine(size_t depth) const
+{
+    std::string space(depth*4, ' ');
+    printf("%s%s\n", space.c_str(), m_sName.c_str());
+    for (auto child : m_vecChildren)
+        child->PrintMultyLine(depth+1);
+}
+
+void CBase::PrintMultyLine() const
+{
+    PrintMultyLine(0);
+}

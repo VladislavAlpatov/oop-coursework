@@ -34,6 +34,6 @@ void CApplication::BuildTree()
 
 int CApplication::ExecApp()
 {
-    PrintInLine();
+    PrintMultyLine();
     return 0;
 }
