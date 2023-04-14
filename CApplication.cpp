@@ -20,6 +20,8 @@ void CApplication::BuildTree()
 
     m_sName = sHeadObjectName;
 
+	CBase* pLastAddedObject = this;
+
     while (true)
     {
         std::cin >> sHeadObjectName >> sNewObjectName;
@@ -27,11 +29,17 @@ void CApplication::BuildTree()
         if (sHeadObjectName == sNewObjectName)
             return;
 
-
-        auto pTarget = BrowseTree(sHeadObjectName);
-
-		if (pTarget)
-        	new CBase(pTarget, sNewObjectName);
+		if (pLastAddedObject->GetName() == sHeadObjectName)
+		{
+			pLastAddedObject = new CBase2(pLastAddedObject, sNewObjectName);
+		}
+		else if (!pLastAddedObject->IsRoot())
+		{
+			if (pLastAddedObject->GetParent()->GetName() == sHeadObjectName and !pLastAddedObject->GetParent()->GetChildByName(sNewObjectName))
+			{
+				pLastAddedObject = new CBase2(pLastAddedObject->GetParent(), sNewObjectName);
+			}
+		}
     }
 }
 

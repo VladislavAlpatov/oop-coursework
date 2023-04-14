@@ -33,5 +33,13 @@ private:
     void PrintMultyLine(size_t depth)   const;
 };
 
+class CBase2 : public CBase
+{
+public:
+	CBase2(CBase* pParent,const std::string& sName) : CBase(pParent, sName)
+	{
+
+	}
+};
 
 #endif //OOP_COURSEWORK_CBASE_H
