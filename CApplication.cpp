@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-CApplication::CApplication(CBase *pHead) : CBase(pHead)
+CApplication::CApplication() : CBase(nullptr)
 {
 
 }
@@ -23,17 +23,20 @@ void CApplication::BuildTree()
     while (true)
     {
         std::cin >> sHeadObjectName >> sNewObjectName;
+
         if (sHeadObjectName == sNewObjectName)
             return;
 
 
         auto pTarget = BrowseTree(sHeadObjectName, this);
-        new CBase(pTarget, sNewObjectName);
+
+		if (pTarget)
+        	new CBase(pTarget, sNewObjectName);
     }
 }
 
 int CApplication::ExecApp()
 {
-    PrintMultyLine();
+    PrintInLine();
     return 0;
 }

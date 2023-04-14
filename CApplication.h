@@ -9,7 +9,7 @@
 class CApplication final : public CBase
 {
 public:
-    CApplication(CBase* pHead);
+    CApplication();
     void BuildTree();
     int ExecApp();
 };

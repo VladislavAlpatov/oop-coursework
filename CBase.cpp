@@ -14,6 +14,9 @@ bool CBase::SetName(const std::string &sName)
     if (sName.empty())
         return false;
 
+	if (m_pParent and m_pParent->GetChildByName(sName))
+		return false;
+
     m_sName = sName;
     return true;
 }
@@ -60,26 +63,21 @@ CBase::~CBase()
         delete pChild;
 }
 
-void CBase::PrintInLine(const CBase *pObj) const
-{
-
-    if (pObj->m_vecChildren.empty())
-        return;
-    if (pObj->IsRoot())
-        printf("%s\n", pObj->m_sName.c_str());
-
-    printf("%s ", pObj->m_sName.c_str());
-
-    for (const auto pHeir : pObj->m_vecChildren)
-        printf((pHeir != pObj->m_vecChildren.back()) ? "%s " : "%s\n", pHeir->m_sName.c_str());
-
-    for (const auto pHeir : pObj->m_vecChildren)
-        PrintInLine(pHeir);
-}
-
 void CBase::PrintInLine() const
 {
-    PrintInLine(this);
+	if (IsRoot())
+		printf("%s", m_sName.c_str());
+
+    if (m_vecChildren.empty())
+        return;
+
+
+    printf("\n%s", m_sName.c_str());
+	for (const auto pHeir : m_vecChildren)
+		printf("  %s", pHeir->m_sName.c_str());
+
+    for (const auto pHeir : m_vecChildren)
+        pHeir->PrintInLine();
 }
 
 bool CBase::IsRoot() const
@@ -97,5 +95,5 @@ void CBase::PrintMultyLine(size_t depth) const
 
 void CBase::PrintMultyLine() const
 {
-    PrintMultyLine(0);
+
 }

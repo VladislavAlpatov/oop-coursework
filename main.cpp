@@ -1,10 +1,8 @@
-#include <iostream>
 #include "CApplication.h"
 
 int main()
 {
-    auto app = CApplication(nullptr);
+	CApplication app;
     app.BuildTree();
-    app.ExecApp();
-    return 0;
+    return app.ExecApp();
 }
