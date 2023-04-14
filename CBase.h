@@ -21,7 +21,7 @@ public:
     [[nodiscard]] std::string GetName()                                              const;
     [[nodiscard]] CBase*      GetParent()                                            const;
     [[nodiscard]] CBase*      GetChildByName(const std::string& sChildName)          const;
-    [[nodiscard]] CBase*      BrowseTree(const std::string& sName, CBase* pObj)      const;
+    [[nodiscard]] CBase*      BrowseTree(const std::string& sName);
 
 
     [[nodiscard]] bool        SetName(const std::string& sName);

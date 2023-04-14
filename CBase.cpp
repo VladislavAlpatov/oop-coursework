@@ -34,14 +34,14 @@ CBase* CBase::GetChildByName(const std::string &sChildName) const
     return nullptr;
 }
 
-CBase* CBase::BrowseTree(const std::string &sName, CBase *pObj) const
+CBase* CBase::BrowseTree(const std::string &sName)
 {
-    if (sName == pObj->m_sName)
-        return pObj;
+    if (sName ==m_sName)
+        return this;
 
-    for (auto pChild : pObj->m_vecChildren)
+    for (auto pChild : m_vecChildren)
     {
-        auto res = BrowseTree(sName, pChild);
+        auto res = pChild->BrowseTree(sName);
         if (res) return res;
     }
 

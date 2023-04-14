@@ -28,7 +28,7 @@ void CApplication::BuildTree()
             return;
 
 
-        auto pTarget = BrowseTree(sHeadObjectName, this);
+        auto pTarget = BrowseTree(sHeadObjectName);
 
 		if (pTarget)
         	new CBase(pTarget, sNewObjectName);
