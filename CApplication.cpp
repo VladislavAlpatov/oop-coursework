@@ -32,14 +32,13 @@ void CApplication::BuildTree()
 		if (pLastAddedObject->GetName() == sHeadObjectName)
 		{
 			pLastAddedObject = new CBase2(pLastAddedObject, sNewObjectName);
+			continue;
 		}
-		else if (!pLastAddedObject->IsRoot())
-		{
-			if (pLastAddedObject->GetParent()->GetName() == sHeadObjectName and !pLastAddedObject->GetParent()->GetChildByName(sNewObjectName))
-			{
-				pLastAddedObject = new CBase2(pLastAddedObject->GetParent(), sNewObjectName);
-			}
-		}
+		if (pLastAddedObject->IsRoot())
+			continue;
+
+		if (pLastAddedObject->GetParent()->GetName() == sHeadObjectName and !pLastAddedObject->GetParent()->GetChildByName(sNewObjectName))
+			pLastAddedObject = new CBase2(pLastAddedObject->GetParent(), sNewObjectName);
     }
 }
 
