@@ -4,4 +4,4 @@ project(oop_coursework)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(oop_coursework main.cpp)
-target_sources(oop_coursework PRIVATE CBase.cpp CApplication.cpp CBase2.cpp)
+target_sources(oop_coursework PRIVATE CBase.cpp CApplication.cpp CObject2.cpp)

@@ -14,7 +14,7 @@ bool CBase::SetName(const std::string &sName)
     if (sName.empty())
         return false;
 
-	if (m_pParent and m_pParent->GetChildByName(sName))
+	if (m_pParent and m_pParent->HasChild(sName))
 		return false;
 
     m_sName = sName;
