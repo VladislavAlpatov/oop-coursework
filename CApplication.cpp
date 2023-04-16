@@ -4,9 +4,10 @@
 
 #include "CApplication.h"
 #include <iostream>
+#include "CBase2.h"
 
 
-CApplication::CApplication() : CBase(nullptr)
+CApplication::CApplication() : CBase(nullptr, "RootObject")
 {
 
 }
@@ -34,11 +35,14 @@ void CApplication::BuildTree()
 			pLastAddedObject = new CBase2(pLastAddedObject, sNewObjectName);
 			continue;
 		}
+
 		if (pLastAddedObject->IsRoot())
 			continue;
 
-		if (pLastAddedObject->GetParent()->GetName() == sHeadObjectName and !pLastAddedObject->GetParent()->GetChildByName(sNewObjectName))
-			pLastAddedObject = new CBase2(pLastAddedObject->GetParent(), sNewObjectName);
+		auto pParentOfLastObject = pLastAddedObject->GetParent();
+
+		if (pParentOfLastObject->GetName() == sHeadObjectName and !pParentOfLastObject->HasChild(sNewObjectName))
+			pLastAddedObject = new CBase2(pParentOfLastObject, sNewObjectName);
     }
 }
 

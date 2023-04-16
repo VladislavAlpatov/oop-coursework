@@ -34,20 +34,6 @@ CBase* CBase::GetChildByName(const std::string &sChildName) const
     return nullptr;
 }
 
-CBase* CBase::BrowseTree(const std::string &sName)
-{
-    if (sName ==m_sName)
-        return this;
-
-    for (auto pChild : m_vecChildren)
-    {
-        auto res = pChild->BrowseTree(sName);
-        if (res) return res;
-    }
-
-    return nullptr;
-}
-
 CBase::CBase(CBase *pParent, const std::string &sName)
 {
     m_pParent = pParent;
@@ -85,15 +71,7 @@ bool CBase::IsRoot() const
     return !m_pParent;
 }
 
-void CBase::PrintMultyLine(size_t depth) const
+bool CBase::HasChild(const std::string& sChildName) const
 {
-    std::string space(depth*4, ' ');
-    printf("%s%s\n", space.c_str(), m_sName.c_str());
-    for (auto child : m_vecChildren)
-        child->PrintMultyLine(depth+1);
-}
-
-void CBase::PrintMultyLine() const
-{
-
+	return GetChildByName(sChildName);
 }
