@@ -48,6 +48,6 @@ void CApplication::BuildTree()
 
 int CApplication::ExecApp()
 {
-    PrintInLine();
+    PrintMultyLineWithReadiness();
     return 0;
 }
