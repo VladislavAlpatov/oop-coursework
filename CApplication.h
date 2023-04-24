@@ -4,7 +4,7 @@
 
 #ifndef OOP_COURSEWORK_CAPPLICATION_H
 #define OOP_COURSEWORK_CAPPLICATION_H
-#include "CBase.h"
+#include "Objects/CBase.h"
 
 class CApplication final : public CBase
 {
