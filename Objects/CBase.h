@@ -43,5 +43,6 @@ private:
 	[[nodiscard]] CBase*	  GetRootObject();
 	[[nodiscard]] int		  CountObjectsByName(const std::string& sName) const;
 	[[nodiscard]] CBase*	  FindObjectByName(const std::string& sName);
+	[[nodiscard]] bool 		  ChainOfSubordinatesIsReady() const;
 };
 #endif //OOP_COURSEWORK_CBASE_H

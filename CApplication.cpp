@@ -19,48 +19,61 @@ CApplication::CApplication() : CBase(nullptr, "RootObject")
 
 void CApplication::BuildTree()
 {
-    std::string sHeadObjectName;
-    std::string sNewObjectName;
+    std::cin >> m_sName;
 
-    std::cin >> sHeadObjectName;
-
-    m_sName = sHeadObjectName;
-
-	CBase* pLastAddedObject = this;
 
     while (true)
     {
-        std::cin >> sHeadObjectName >> sNewObjectName;
+		std::string sNameOfObjectAddTo;
+		std::string sNewObjectName;
+		int         iClassType;
 
-        if (sHeadObjectName == sNewObjectName)
-            return;
+		std::cin >> sNameOfObjectAddTo;
 
-		if (pLastAddedObject->GetName() == sHeadObjectName)
-		{
-			pLastAddedObject = new CObject2(pLastAddedObject, sNewObjectName);
+		if (sNameOfObjectAddTo == "endtree")
+			return;
+
+		CBase*  pHeadObject = FindObjectFromRoot(sNameOfObjectAddTo);
+
+		if (!pHeadObject)
 			continue;
-		}
 
-		if (pLastAddedObject->IsRoot())
+		std::cin >> sNewObjectName >> iClassType;
+
+		if (pHeadObject->FindObjectFromRoot(sNewObjectName))
 			continue;
 
-		auto pParentOfLastObject = pLastAddedObject->GetParent();
+		CreateObjectByNumber(iClassType, pHeadObject, sNewObjectName);
 
-		if (pParentOfLastObject->GetName() == sHeadObjectName and !pParentOfLastObject->HasChild(sNewObjectName))
-			pLastAddedObject = new CObject2(pParentOfLastObject, sNewObjectName);
     }
 }
 
 int CApplication::ExecApp()
 {
+	printf("Object tree\n");
+	PrintMultyLine();
+	std::string sNameOfObjectForReadinessChange;
+
+	while (std::cin >> sNameOfObjectForReadinessChange)
+	{
+		int iReadinessStatus;
+		std::cin >> iReadinessStatus;
+
+		auto pTargetObject = FindObjectFromRoot(sNameOfObjectForReadinessChange);
+
+		if (pTargetObject)
+			pTargetObject->SetReadiness(iReadinessStatus);
+
+	}
+	printf("The tree of objects and their readiness\n");
+
     PrintMultyLineWithReadiness();
+
     return 0;
 }
 
 CBase* CApplication::CreateObjectByNumber(const int iNumber, CBase* pHead, const std::string& sName) const
 {
-
-
 	switch (iNumber)
 	{
 	case 2: return new CObject2(pHead, sName);

@@ -35,7 +35,7 @@ CBase::CBase(CBase *pParent, const std::string &sName)
 {
     m_pParent = pParent;
     m_sName   = sName;
-
+	m_iReadiness = 0;
     if (pParent)
         m_pParent->m_vecChildren.push_back(this);
 }
@@ -96,7 +96,7 @@ CBase* CBase::GetRootObject()
 {
 	if (IsRoot())
 		return this;
-	GetParent()->GetRootObject();
+	return GetParent()->GetRootObject();
  }
 
 int CBase::CountObjectsByName(const std::string& sName) const
@@ -114,13 +114,15 @@ int CBase::CountObjectsByName(const std::string& sName) const
 
 void CBase::SetReadiness(int iReadyStatus)
 {
-	m_iReadiness = iReadyStatus;
-
-	if (m_iReadiness)
+	if (iReadyStatus and !ChainOfSubordinatesIsReady())
 		return;
 
-	for (auto pObject : m_vecChildren)
-		pObject->SetReadiness(iReadyStatus);
+	m_iReadiness = iReadyStatus;
+
+	if (!iReadyStatus)
+		for (auto pObject : m_vecChildren)
+			pObject->SetReadiness(iReadyStatus);
+
 }
 
 CBase* CBase::FindObjectByName(const std::string& sName)
@@ -148,3 +150,10 @@ CBase* CBase::FindObjectFromRoot(const std::string& sName)
 	return GetRootObject()->FindObjectFromCurrentObject(sName);
 }
 
+bool CBase::ChainOfSubordinatesIsReady() const
+{
+	for (auto pObj = GetParent(); pObj; pObj = pObj->GetParent())
+		if (!pObj->IsReady())
+			return false;
+	return true;
+}
