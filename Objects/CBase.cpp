@@ -92,3 +92,59 @@ bool CBase::IsReady() const
 	return m_iReadiness != 0;
 }
 
+CBase* CBase::GetRootObject()
+{
+	if (IsRoot())
+		return this;
+	GetParent()->GetRootObject();
+ }
+
+int CBase::CountObjectsByName(const std::string& sName) const
+{
+	int count = 0;
+
+	if (m_sName == sName)
+		count++;
+
+	for (const auto pObj : m_vecChildren)
+		count += pObj->CountObjectsByName(sName);
+
+	return count;
+}
+
+void CBase::SetReadiness(int iReadyStatus)
+{
+	m_iReadiness = iReadyStatus;
+
+	if (m_iReadiness)
+		return;
+
+	for (auto pObject : m_vecChildren)
+		pObject->SetReadiness(iReadyStatus);
+}
+
+CBase* CBase::FindObjectByName(const std::string& sName)
+{
+	if (m_sName == sName)
+		return this;
+
+	for (const auto pObject : m_vecChildren)
+	{
+		auto res = pObject->FindObjectByName(sName);
+
+		if (res)
+			return res;
+	}
+	return nullptr;
+}
+
+CBase* CBase::FindObjectFromCurrentObject(const std::string& sName)
+{
+	return (CountObjectsByName(sName) > 1) ? nullptr : FindObjectByName(sName);
+}
+
+CBase* CBase::FindObjectFromRoot(const std::string& sName)
+{
+	return GetRootObject()->FindObjectFromCurrentObject(sName);
+}
+

@@ -3,3 +3,7 @@
 //
 
 #include "CObject5.h"
+
+CObject5::CObject5(CBase* pParent, const std::string& sName) : CBase(pParent, sName)
+{
+}

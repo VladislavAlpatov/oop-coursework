@@ -8,7 +8,8 @@
 
 class CObject6 : public CBase
 {
-
+public:
+	CObject6(CBase* pParent, const std::string& sName);
 };
 
 

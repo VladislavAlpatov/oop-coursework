@@ -26,14 +26,22 @@ public:
 
 
     [[nodiscard]] bool        SetName(const std::string& sName);
+	[[nodiscard]] CBase*	  FindObjectFromCurrentObject(const std::string& sName);
+	[[nodiscard]] CBase*	  FindObjectFromRoot(const std::string& sName);
+
     [[nodiscard]] bool        IsRoot()                                const;
 	[[nodiscard]] bool 		  IsReady()                               const;
 
-	[[nodiscard]] bool        HasChild(const std::string& sChildName) const;
-	              void        PrintInLine()                           const;
-				  void        PrintMultyLine(size_t depth = 0) const;
-				  void PrintMultyLineWithReadiness(size_t depth = 0) const;
-    ~CBase();
+	[[nodiscard]] bool        HasChild(const std::string& sChildName)       const;
+	              void        PrintInLine()                                 const;
+				  void        PrintMultyLine(size_t depth = 0)              const;
+				  void        PrintMultyLineWithReadiness(size_t depth = 0) const;
 
+	              void        SetReadiness(int iReadyStatus);
+    ~CBase();
+private:
+	[[nodiscard]] CBase*	  GetRootObject();
+	[[nodiscard]] int		  CountObjectsByName(const std::string& sName) const;
+	[[nodiscard]] CBase*	  FindObjectByName(const std::string& sName);
 };
 #endif //OOP_COURSEWORK_CBASE_H

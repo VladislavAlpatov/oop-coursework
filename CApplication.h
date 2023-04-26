@@ -12,6 +12,8 @@ public:
     CApplication();
     void BuildTree();
     int ExecApp();
+private:
+	CBase* CreateObjectByNumber(int iNumber, CBase* pHead, const std::string& sName) const;
 };
 
 
