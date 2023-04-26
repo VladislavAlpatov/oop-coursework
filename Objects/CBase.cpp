@@ -36,7 +36,7 @@ CBase::CBase(CBase *pParent, const std::string &sName)
     m_pParent = pParent;
     m_sName   = sName;
 	m_iReadiness = 0;
-    if (pParent)
+    if (!IsRoot())
         m_pParent->m_vecChildren.push_back(this);
 }
 
@@ -65,7 +65,7 @@ void CBase::PrintInLine() const
 void CBase::PrintMultyLineWithReadiness(size_t depth) const
 {
 	std::string space(depth*4, ' ');
-	printf("%s%s %s\n", space.c_str(), m_sName.c_str(), (IsReady()) ? "is ready" : "is not ready");
+	printf((IsRoot()) ? "%s%s %s" : "\n%s%s %s", space.c_str(), m_sName.c_str(), (IsReady()) ? "is ready" : "is not ready");
 	for (auto child : m_vecChildren)
 		child->PrintMultyLineWithReadiness(depth+1);
 }
@@ -73,7 +73,7 @@ void CBase::PrintMultyLineWithReadiness(size_t depth) const
 void CBase::PrintMultyLine(size_t depth) const
 {
 	std::string space(depth*4, ' ');
-	printf("%s%s\n", space.c_str(), m_sName.c_str());
+	printf((IsRoot()) ? "%s%s" : "\n%s%s", space.c_str(), m_sName.c_str());
 	for (auto child : m_vecChildren)
 		child->PrintMultyLine(depth+1);
 }
