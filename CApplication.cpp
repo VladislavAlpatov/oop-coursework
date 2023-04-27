@@ -33,7 +33,7 @@ void CApplication::BuildTree()
 		if (sNameOfObjectAddTo == "endtree")
 			return;
 
-		CBase*  pHeadObject = FindObjectFromRoot(sNameOfObjectAddTo);
+		auto pHeadObject = FindObjectFromRoot(sNameOfObjectAddTo);
 
 		if (!pHeadObject)
 			continue;
