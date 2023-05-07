@@ -201,7 +201,7 @@ void CBase::RemoveChildByName(const std::string& sName)
 
 bool CBase::TransferOwnershipTo(CBase* pNewOwner)
 {
-	if (IsRoot() or pNewOwner->HasChild(m_sName) or pNewOwner->AbsolutePathToThisObjectContainsAnotherObject(this))
+	if (IsRoot() or pNewOwner->HasChild(m_sName) or pNewOwner->PathContainsObject(this))
 		return false;
 
 	GetParent()->RemoveChildByName(m_sName);
@@ -230,7 +230,7 @@ void CBase::DeleteChildByName(const std::string& sName)
 	RemoveChildByName(sName);
 }
 
-bool CBase::AbsolutePathToThisObjectContainsAnotherObject(CBase* pObject) const
+bool CBase::PathContainsObject(CBase* pObject) const
 {
 	for (auto pCurrent = this; pCurrent-IsRoot(); pCurrent = pCurrent->GetParent())
 		if (pCurrent == pObject)

@@ -33,7 +33,6 @@ public:
     [[nodiscard]] bool        IsRoot()                                      const;
 	[[nodiscard]] bool 		  IsReady()                                     const;
 	[[nodiscard]] bool        HasChild(const std::string& sChildName)       const;
-	[[nodiscard]] bool 		  AbsolutePathToThisObjectContainsAnotherObject(CBase* pObject) const;
 	[[nodiscard]] std::string GetAbsolutePath()								const;
 	              void        PrintInLine()                                 const;
 				  void        PrintMultyLine(size_t depth = 0)              const;
@@ -43,6 +42,7 @@ public:
     ~CBase();
 private:
 	void 		  RemoveChildByName(const std::string& sName);
+	[[nodiscard]] bool 		  PathContainsObject(CBase* pObject) const;
 	[[nodiscard]] CBase*	  GetRootObject();
 	[[nodiscard]] int		  CountObjectsByName(const std::string& sName) const;
 	[[nodiscard]] CBase*	  FindObjectByName(const std::string& sName);
