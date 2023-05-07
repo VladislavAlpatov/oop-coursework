@@ -3,6 +3,8 @@
 //
 
 #include "CBase.h"
+#include "../utils/utils.h"
+
 
 std::string CBase::GetName() const
 {
@@ -156,4 +158,82 @@ bool CBase::ChainOfSubordinatesIsReady() const
 		if (!pObj->IsReady())
 			return false;
 	return true;
+}
+
+CBase* CBase::GetObjectByPath(const std::string& str)
+{
+	if (str.empty())
+		return nullptr;
+
+	if (str.front() == '.' and str.length() == 1)
+		return this;
+
+	if (str.front() == '.')
+		return FindObjectFromCurrentObject({str.begin()+1, str.end()});
+
+	if (str.rfind("//") == 0)
+		return FindObjectFromRoot({str.begin()+2, str.end()});
+
+
+	auto pCurrentObject = (str.front() == '/') ? GetRootObject() : this;
+
+	for (const  auto& sNameOfNextObject : utils::SplitString(str, "/"))
+	{
+		if (sNameOfNextObject.empty())
+			continue;
+
+		pCurrentObject = pCurrentObject->GetChildByName(sNameOfNextObject);
+
+		if (!pCurrentObject) return nullptr;
+	}
+	return pCurrentObject;
+}
+
+void CBase::RemoveChildByName(const std::string& sName)
+{
+	if (!HasChild(sName))
+		return;
+
+	auto pChild = GetChildByName(sName);
+
+	m_vecChildren.erase(std::remove(m_vecChildren.begin(), m_vecChildren.end(), pChild), m_vecChildren.end());
+}
+
+bool CBase::TransferOwnershipTo(CBase* pNewOwner)
+{
+	if (IsRoot() or pNewOwner->HasChild(m_sName) or pNewOwner->AbsolutePathToThisObjectContainsAnotherObject(this))
+		return false;
+
+	GetParent()->RemoveChildByName(m_sName);
+
+	pNewOwner->m_vecChildren.push_back(this);
+	return true;
+}
+
+std::string CBase::GetAbsolutePath() const
+{
+	if (IsRoot()) return "/";
+	std::string path;
+
+
+	for (auto pCurrent = this; !pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
+	{
+		path = "/" + pCurrent->m_sName + path;
+	}
+
+	return path;
+}
+
+void CBase::DeleteChildByName(const std::string& sName)
+{
+	delete GetChildByName(sName);
+	RemoveChildByName(sName);
+}
+
+bool CBase::AbsolutePathToThisObjectContainsAnotherObject(CBase* pObject) const
+{
+	for (auto pCurrent = this; pCurrent-IsRoot(); pCurrent = pCurrent->GetParent())
+		if (pCurrent == pObject)
+			return true;
+	return false;
 }

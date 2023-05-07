@@ -24,23 +24,23 @@ void CApplication::BuildTree()
 
     while (true)
     {
-		std::string sNameOfObjectAddTo;
+		std::string sPathToHeadObject;
 		std::string sNewObjectName;
 		int         iClassType;
 
-		std::cin >> sNameOfObjectAddTo;
+		std::cin >> sPathToHeadObject;
 
-		if (sNameOfObjectAddTo == "endtree")
-			return;
+		if (sPathToHeadObject == "endtree")
+			break;
 
-		auto pHeadObject = FindObjectFromRoot(sNameOfObjectAddTo);
+		auto pHeadObject = GetObjectByPath(sPathToHeadObject);
 
 		if (!pHeadObject)
 			continue;
 
 		std::cin >> sNewObjectName >> iClassType;
 
-		if (pHeadObject->FindObjectFromRoot(sNewObjectName))
+		if (pHeadObject->HasChild(sNewObjectName))
 			continue;
 
 		CreateObjectByNumber(iClassType, pHeadObject, sNewObjectName);
@@ -52,23 +52,49 @@ int CApplication::ExecApp()
 {
 	printf("Object tree\n");
 	PrintMultyLine();
-	std::string sNameOfObjectForReadinessChange;
+	printf("\n");
 
-	while (std::cin >> sNameOfObjectForReadinessChange)
+	CBase* pCurrentObject = this;
+	while (true)
 	{
-		int iReadinessStatus;
-		std::cin >> iReadinessStatus;
+		std::string sCommandName;
+		std::cin >>sCommandName;
 
-		auto pTargetObject = FindObjectFromRoot(sNameOfObjectForReadinessChange);
+		if (sCommandName == "END")
+			break;
 
-		if (pTargetObject)
-			pTargetObject->SetReadiness(iReadinessStatus);
+		if (sCommandName == "FIND")
+		{
+			std::string sPath;
+			std::cin >> sPath;
 
+			FindObjectByPath(pCurrentObject,sPath);
+
+		}
+		else if (sCommandName == "MOVE")
+		{
+			std::string sPath;
+			std::cin >> sPath;
+
+			MoveObject(pCurrentObject,sPath);
+		}
+		else if (sCommandName == "DELETE")
+		{
+			std::string sChildName;
+			std::cin >> sChildName;
+
+			DeleteChildByName(pCurrentObject, sChildName);
+		}
+		else if (sCommandName == "SET")
+		{
+			std::string sChildName;
+			std::cin >> sChildName;
+
+			SetCurrentObject(pCurrentObject, sChildName);
+		}
 	}
-	printf("The tree of objects and their readiness\n");
-
-    PrintMultyLineWithReadiness();
-
+	printf("Current object hierarchy tree\n");
+	PrintMultyLine();
     return 0;
 }
 
@@ -84,3 +110,61 @@ CBase* CApplication::CreateObjectByNumber(const int iNumber, CBase* pHead, const
 	}
 	return nullptr;
 }
+
+
+void CApplication::FindObjectByPath(CBase* pObject, const std::string& sPathToObject)
+{
+	const auto pFoundObject = pObject->GetObjectByPath(sPathToObject);
+
+	if (pFoundObject)
+		printf("%s     Object name: %s\n", sPathToObject.c_str(), pFoundObject->GetName().c_str());
+
+	else
+		printf("%s     Object is not found\n", sPathToObject.c_str());
+}
+
+void CApplication::MoveObject(CBase* pObject, const std::string& sPathTo)
+{
+	auto pNewHeadObject = pObject->GetObjectByPath(sPathTo);
+
+	if (!pNewHeadObject)
+	{
+		printf("%s     Head object is not found\n", sPathTo.c_str());
+		return;
+	}
+	if (pNewHeadObject->HasChild(pObject->GetName()))
+	{
+		printf("%s     Dubbing the names of subordinate objects\n", sPathTo.c_str());
+		return;
+	}
+
+	if (!pObject->TransferOwnershipTo(pNewHeadObject))
+		printf("%s     Redefining the head object failed\n", sPathTo.c_str());
+	else
+		printf("New head object: %s\n",pNewHeadObject->GetName().c_str());
+}
+
+void CApplication::DeleteChildByName(CBase* pObject, const std::string& sChildName)
+{
+	if (!pObject->HasChild(sChildName))
+		return;
+
+	auto sAbsPathToDeletedObject = pObject->GetChildByName(sChildName)->GetAbsolutePath();
+
+	pObject->DeleteChildByName(sChildName);
+
+	printf("The object %s has been deleted\n", sAbsPathToDeletedObject.c_str());
+}
+
+void CApplication::SetCurrentObject(CBase*& pObject, const std::string& sPathToObject)
+{
+	const auto pFoundObject = pObject->GetObjectByPath(sPathToObject);
+
+	if (!pFoundObject)
+		printf("The object was not found at the specified coordinate: %s\n", sPathToObject.c_str());
+	else
+		printf("Object is set: %s\n", pFoundObject->GetName().c_str());
+
+	pObject = pFoundObject;
+}
+
