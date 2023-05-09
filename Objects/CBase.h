@@ -42,7 +42,7 @@ public:
     ~CBase();
 
 private:
-	void 		  RemoveChildByName(const std::string& sName);
+	void 		              RemoveChildByName(const std::string& sName);
 	[[nodiscard]] bool 		  PathContainsObject(CBase* pObject) const;
 	[[nodiscard]] CBase*	  GetRootObject();
 	[[nodiscard]] int		  CountObjectsByName(const std::string& sName) const;

@@ -235,7 +235,7 @@ void CBase::DeleteChildByName(const std::string& sName)
 
 bool CBase::PathContainsObject(CBase* pObject) const
 {
-	for (auto pCurrent = this; pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
+	for (auto pCurrent = this; !pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
 		if (pCurrent == pObject)
 			return true;
 	return false;

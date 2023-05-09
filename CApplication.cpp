@@ -165,9 +165,11 @@ void CApplication::SetCurrentObject(CBase*& pObject, const std::string& sPathToO
 	const auto pFoundObject = pObject->GetObjectByPath(sPathToObject);
 
 	if (!pFoundObject)
-		printf("The object was not found at the specified coordinate: %s\n", sPathToObject.c_str());
-	else
-		printf("Object is set: %s\n", pFoundObject->GetName().c_str());
+	{
+		printf("The object was not found at the specified coordinate: %s\n",sPathToObject.c_str());
+		return;
+	}
+	printf("Object is set: %s\n", pFoundObject->GetName().c_str());
 
 	pObject = pFoundObject;
 }
