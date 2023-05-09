@@ -16,6 +16,9 @@ bool CBase::SetName(const std::string &sName)
 	if (m_pParent and m_pParent->HasChild(sName))
 		return false;
 
+	if (!IsNameIsNotCausePathConflict(sName))
+		return false;
+
     m_sName = sName;
     return true;
 }
@@ -232,8 +235,13 @@ void CBase::DeleteChildByName(const std::string& sName)
 
 bool CBase::PathContainsObject(CBase* pObject) const
 {
-	for (auto pCurrent = this; pCurrent-IsRoot(); pCurrent = pCurrent->GetParent())
+	for (auto pCurrent = this; pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
 		if (pCurrent == pObject)
 			return true;
 	return false;
+}
+
+bool CBase::IsNameIsNotCausePathConflict(const std::string& sName)
+{
+	return sName.find('/') == std::string::npos;
 }

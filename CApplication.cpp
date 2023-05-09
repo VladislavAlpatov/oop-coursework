@@ -38,10 +38,14 @@ void CApplication::BuildTree()
 		auto pHeadObject = GetObjectByPath(sPathToHeadObject);
 
 		if (!pHeadObject)
-			continue;
+		{
+			printf("The head object %s is not found\n", sPathToHeadObject.c_str());
+			PrintMultyLine();
+			exit(1);
+		}
 
-		if (pHeadObject->HasChild(sNewObjectName))
-			continue;
+		if (pHeadObject->HasChild(sNewObjectName) or !IsNameIsNotCausePathConflict(sNewObjectName))
+			printf("%s Dubbing the names of subordinate objects\n", sPathToHeadObject.c_str());
 
 		CreateObjectByNumber(iClassType, pHeadObject, sNewObjectName);
 

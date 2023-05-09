@@ -48,5 +48,7 @@ private:
 	[[nodiscard]] int		  CountObjectsByName(const std::string& sName) const;
 	[[nodiscard]] CBase*	  FindObjectByName(const std::string& sName);
 	[[nodiscard]] bool 		  ChainOfSubordinatesIsReady() const;
+protected:
+	[[nodiscard]] static bool IsNameIsNotCausePathConflict(const std::string& sName);
 };
 #endif //OOP_COURSEWORK_CBASE_H
