@@ -168,7 +168,7 @@ CBase* CBase::GetObjectByPath(const std::string& sPath)
 	if (sPath.empty())
 		return nullptr;
 
-	if (sPath.front() == '.' and sPath.length() == 1)
+	if (sPath == ".")
 		return this;
 
 	if (sPath.front() == '.')
@@ -194,12 +194,7 @@ CBase* CBase::GetObjectByPath(const std::string& sPath)
 
 void CBase::RemoveChildByName(const std::string& sName)
 {
-	if (!HasChild(sName))
-		return;
-
-	auto pChild = GetChildByName(sName);
-
-	m_vecChildren.erase(std::remove(m_vecChildren.begin(), m_vecChildren.end(), pChild), m_vecChildren.end());
+	m_vecChildren.erase(std::remove(m_vecChildren.begin(), m_vecChildren.end(), GetChildByName(sName)), m_vecChildren.end());
 }
 
 bool CBase::TransferOwnershipTo(CBase* pNewOwner)
