@@ -33,12 +33,12 @@ void CApplication::BuildTree()
 		if (sPathToHeadObject == "endtree")
 			break;
 
+		std::cin >> sNewObjectName >> iClassType;
+
 		auto pHeadObject = GetObjectByPath(sPathToHeadObject);
 
 		if (!pHeadObject)
 			continue;
-
-		std::cin >> sNewObjectName >> iClassType;
 
 		if (pHeadObject->HasChild(sNewObjectName))
 			continue;

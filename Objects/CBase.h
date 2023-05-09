@@ -28,7 +28,7 @@ public:
     [[nodiscard]] bool        SetName(const std::string& sName);
 	[[nodiscard]] CBase*	  FindObjectFromCurrentObject(const std::string& sName);
 	[[nodiscard]] CBase*	  FindObjectFromRoot(const std::string& sName);
-	[[nodiscard]] CBase*      GetObjectByPath(const std::string& str);
+	[[nodiscard]] CBase*      GetObjectByPath(const std::string& sPath);
 	[[nodiscard]] bool 		  TransferOwnershipTo(CBase* pNewOwner);
     [[nodiscard]] bool        IsRoot()                                      const;
 	[[nodiscard]] bool 		  IsReady()                                     const;
@@ -40,6 +40,7 @@ public:
 				  void 		  DeleteChildByName(const std::string& sName);
 	              void        SetReadiness(int iReadyStatus);
     ~CBase();
+
 private:
 	void 		  RemoveChildByName(const std::string& sName);
 	[[nodiscard]] bool 		  PathContainsObject(CBase* pObject) const;

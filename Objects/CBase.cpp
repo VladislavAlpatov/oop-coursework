@@ -160,24 +160,24 @@ bool CBase::ChainOfSubordinatesIsReady() const
 	return true;
 }
 
-CBase* CBase::GetObjectByPath(const std::string& str)
+CBase* CBase::GetObjectByPath(const std::string& sPath)
 {
-	if (str.empty())
+	if (sPath.empty())
 		return nullptr;
 
-	if (str.front() == '.' and str.length() == 1)
+	if (sPath.front() == '.' and sPath.length() == 1)
 		return this;
 
-	if (str.front() == '.')
-		return FindObjectFromCurrentObject({str.begin()+1, str.end()});
+	if (sPath.front() == '.')
+		return FindObjectFromCurrentObject({ sPath.begin() + 1, sPath.end()});
 
-	if (str.rfind("//") == 0)
-		return FindObjectFromRoot({str.begin()+2, str.end()});
+	if (sPath.rfind("//") == 0)
+		return FindObjectFromRoot({ sPath.begin() + 2, sPath.end()});
 
 
-	auto pCurrentObject = (str.front() == '/') ? GetRootObject() : this;
+	auto pCurrentObject = (sPath.front() == '/') ? GetRootObject() : this;
 
-	for (const  auto& sNameOfNextObject : utils::SplitString(str, "/"))
+	for (const  auto& sNameOfNextObject : utils::SplitString(sPath, "/"))
 	{
 		if (sNameOfNextObject.empty())
 			continue;
@@ -217,17 +217,17 @@ std::string CBase::GetAbsolutePath() const
 
 
 	for (auto pCurrent = this; !pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
-	{
 		path = "/" + pCurrent->m_sName + path;
-	}
 
 	return path;
 }
 
 void CBase::DeleteChildByName(const std::string& sName)
 {
-	delete GetChildByName(sName);
+	auto tmp = GetChildByName(sName);
 	RemoveChildByName(sName);
+
+	delete tmp;
 }
 
 bool CBase::PathContainsObject(CBase* pObject) const
