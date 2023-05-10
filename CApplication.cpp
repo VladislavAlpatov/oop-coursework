@@ -44,12 +44,15 @@ void CApplication::BuildTree()
 			exit(1);
 		}
 
-		if (pHeadObject->HasChild(sNewObjectName) or !IsNameIsNotCausePathConflict(sNewObjectName))
-			printf("%s Dubbing the names of subordinate objects\n", sPathToHeadObject.c_str());
+		if (pHeadObject->HasChild(sNewObjectName) || !IsNameIsNotCausePathConflict(sNewObjectName))
+		{
+			printf("%s    Dubbing the names of subordinate objects\n", sPathToHeadObject.c_str());
+			continue;
+		}
 
 		CreateObjectByNumber(iClassType, pHeadObject, sNewObjectName);
 
-    }
+	}
 }
 
 int CApplication::ExecApp()
