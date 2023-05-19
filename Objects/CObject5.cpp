@@ -15,10 +15,12 @@ int CObject5::GetObjectID() const
 
 void CObject5::Signal(std::string& sText)
 {
+	sText += " (class: 5)";
+	printf("Signal from %s\n", GetAbsolutePath().c_str());
 
 }
 
 void CObject5::Handle(const std::string& text)
 {
-
+	printf("Signal to %s Text: %s\n", GetAbsolutePath().c_str(), text.c_str());
 }
