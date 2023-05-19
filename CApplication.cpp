@@ -11,6 +11,8 @@
 #include "Objects/CObject5.h"
 #include "Objects/CObject6.h"
 
+#define MAKE_SIGNAL( signal_f ) ( TYPE_SIGNAL ) ( & signal_f )
+#define MAKE_HANDLER( handler_f ) ( TYPE_HANDLER ) ( & handler_f )
 
 CApplication::CApplication() : CBase(nullptr, "RootObject")
 {
@@ -39,8 +41,9 @@ void CApplication::BuildTree()
 
 		if (!pHeadObject)
 		{
-			printf("The head object %s is not found\n", sPathToHeadObject.c_str());
+			printf("Object tree\n");
 			PrintMultyLine();
+			printf("\nThe head object %s is not found\n", sPathToHeadObject.c_str());
 			exit(1);
 		}
 
@@ -51,6 +54,33 @@ void CApplication::BuildTree()
 		}
 
 		CreateObjectByNumber(iClassType, pHeadObject, sNewObjectName);
+	}
+	while (true)
+	{
+		std::string sPathToSignalSenderObject;
+		std::string sPathTargetObject;
+
+		std::cin >> sPathToSignalSenderObject;
+		if (sPathToSignalSenderObject == "end_of_connections")
+			break;
+
+		std::cin >> sPathTargetObject;
+
+		const auto pSignalStartObject   = GetObjectByPath(sPathToSignalSenderObject);
+		const auto pHandleTargetObject  = GetObjectByPath(sPathTargetObject);
+
+		if (!pSignalStartObject)
+		{
+			printf("Object %s not found\n", sPathToSignalSenderObject.c_str());
+			return;
+		}
+		if (!pHandleTargetObject)
+		{
+			printf("Handler object %s not found\n", sPathTargetObject.c_str());
+			return;
+		}
+
+		pSignalStartObject->SetConnection(GetObjectSignal(pSignalStartObject),pHandleTargetObject, GetObjectHandle(pHandleTargetObject));
 
 	}
 }
@@ -65,7 +95,7 @@ int CApplication::ExecApp()
 	while (true)
 	{
 		std::string sCommandName;
-		std::cin >>sCommandName;
+		std::cin >> sCommandName;
 
 		if (sCommandName == "END")
 			break;
@@ -75,7 +105,7 @@ int CApplication::ExecApp()
 			std::string sPath;
 			std::cin >> sPath;
 
-			FindObjectByPath(pCurrentObject,sPath);
+			FindObjectByPath(pCurrentObject, sPath);
 
 		}
 		else if (sCommandName == "MOVE")
@@ -83,7 +113,7 @@ int CApplication::ExecApp()
 			std::string sPath;
 			std::cin >> sPath;
 
-			MoveObject(pCurrentObject,sPath);
+			MoveObject(pCurrentObject, sPath);
 		}
 		else if (sCommandName == "DELETE")
 		{
@@ -98,6 +128,23 @@ int CApplication::ExecApp()
 			std::cin >> sChildName;
 
 			SetCurrentObject(pCurrentObject, sChildName);
+		}
+		else if (sCommandName == "EMIT")
+		{
+			std::string sPathToObject;
+			std::string sText;
+			std::cin >> sPathToObject;
+			std::getline(std::cin, sText);
+
+			EmitSignalForObject(sPathToObject, sText);
+		}
+		else if (sCommandName == "SET_CONDITION")
+		{
+			std::string sPathToObject;
+			int iStateValue;
+			std::cin >> sPathToObject >> iStateValue;
+
+			SetCondition(sPathToObject, iStateValue);
 		}
 	}
 	printf("Current object hierarchy tree\n");
@@ -175,5 +222,61 @@ void CApplication::SetCurrentObject(CBase*& pObject, const std::string& sPathToO
 	printf("Object is set: %s\n", pFoundObject->GetName().c_str());
 
 	pObject = pFoundObject;
+}
+
+int CApplication::GetObjectID() const
+{
+	return 1;
+}
+
+TYPE_SIGNAL CApplication::GetObjectSignal(const CBase* pObject) const
+{
+	switch (pObject->GetObjectID())
+	{
+		case 2: return MAKE_SIGNAL(CObject2::Signal);
+		case 3: return MAKE_SIGNAL(CObject3::Signal);
+		case 4: return MAKE_SIGNAL(CObject4::Signal);
+		case 5: return MAKE_SIGNAL(CObject5::Signal);
+		case 6: return MAKE_SIGNAL(CObject6::Signal);
+	}
+	return nullptr;
+}
+
+TYPE_HANDLER CApplication::GetObjectHandle(const CBase* pObject) const
+{
+	switch (pObject->GetObjectID())
+	{
+	case 2: return MAKE_HANDLER(CObject2::Handle);
+	case 3: return MAKE_HANDLER(CObject3::Handle);
+	case 4: return MAKE_HANDLER(CObject4::Handle);
+	case 5: return MAKE_HANDLER(CObject5::Handle);
+	case 6: return MAKE_HANDLER(CObject6::Handle);
+	}
+	return nullptr;
+}
+
+void CApplication::EmitSignalForObject(const std::string& sPathToTargetObject, std::string sText)
+{
+	auto pObject = GetObjectByPath(sPathToTargetObject);
+
+	if (!pObject)
+	{
+		printf("Object %s not found\n", sPathToTargetObject.c_str());
+		return;
+	}
+	pObject->EmitSignal(GetObjectSignal(pObject), sText);
+}
+
+void CApplication::SetCondition(const std::string& sPathToTargetObject, int iCondition)
+{
+	auto pObject = GetObjectByPath(sPathToTargetObject);
+
+	if (!pObject)
+	{
+		printf("Object %s not found\n", sPathToTargetObject.c_str());
+		return;
+	}
+
+	pObject->SetReadiness(iCondition);
 }
 

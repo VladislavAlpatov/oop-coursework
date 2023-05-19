@@ -1,136 +1,115 @@
-//
-// Created by alpat on 30.03.2023.
-//
-
 #include "CBase.h"
 #include "../utils/utils.h"
+#include <algorithm>
 
 
 std::string CBase::GetName() const
 {
-    return m_sName;
+	return m_sName;
 }
 
-bool CBase::SetName(const std::string &sName)
+bool CBase::SetName(const std::string& sName)
 {
-	if (m_pParent and m_pParent->HasChild(sName))
+
+	if (m_pParent && m_pParent->HasChild(sName)) // проверка еслть ли объект м таким имеменем
 		return false;
 
-	if (!IsNameIsNotCausePathConflict(sName))
+	if (sName.find("/") != std::string::npos)
 		return false;
 
-    m_sName = sName;
-    return true;
+	m_sName = sName;
+	return true;
 }
 
 CBase* CBase::GetParent() const
 {
-    return m_pParent;
+	return m_pParent;
 }
-
-CBase* CBase::GetChildByName(const std::string &sChildName) const
+bool CBase::IsReady() const
 {
-    for (const auto pChild : m_vecChildren)
-        if (pChild->m_sName == sChildName)
-            return pChild;
-    return nullptr;
+	return m_iReadiness;
 }
-
-CBase::CBase(CBase *pParent, const std::string &sName)
+CBase* CBase::GetChildByName(const std::string& sChildName) const // получение объекта по имени
 {
-    m_pParent = pParent;
-    m_sName   = sName;
-	m_iReadiness = 0;
-    if (!IsRoot())
-        m_pParent->m_vecChildren.push_back(this);
+	for (const auto pChild : m_vecChildren)
+		if (pChild->m_sName == sChildName)
+			return pChild;
+	return nullptr;
 }
+CBase::CBase(CBase* pParent,const std::string& sName)
+{
+	m_pParent = pParent;
+	m_sName = sName;
+	m_iReadiness = 1; // объекты не готовы поумолчанию
 
+	if (!IsRoot()) // если объект будет иметь подчинителя
+		m_pParent->m_vecChildren.push_back(this);
+}
 CBase::~CBase()
 {
-    for (auto pChild : m_vecChildren)
-        delete pChild;
-}
-
-void CBase::PrintInLine() const
-{
-	if (IsRoot())
-		printf("%s", m_sName.c_str());
-
-    if (m_vecChildren.empty())
-        return;
-
-
-    printf("\n%s", m_sName.c_str());
-	for (const auto pHeir : m_vecChildren)
-		printf("  %s", pHeir->m_sName.c_str());
-
-    for (const auto pHeir : m_vecChildren)
-        pHeir->PrintInLine();
-}
-void CBase::PrintMultyLineWithReadiness(size_t depth) const
-{
-	std::string space(depth*4, ' ');
-	printf((IsRoot()) ? "%s%s %s" : "\n%s%s %s", space.c_str(), m_sName.c_str(), (IsReady()) ? "is ready" : "is not ready");
-	for (auto child : m_vecChildren)
-		child->PrintMultyLineWithReadiness(depth+1);
-}
-
-void CBase::PrintMultyLine(size_t depth) const
-{
-	std::string space(depth*4, ' ');
-	printf((IsRoot()) ? "%s%s" : "\n%s%s", space.c_str(), m_sName.c_str());
-	for (auto child : m_vecChildren)
-		child->PrintMultyLine(depth+1);
+	for (auto pChild : m_vecChildren)
+		delete pChild;
 }
 bool CBase::IsRoot() const
 {
-    return !m_pParent;
+	return !m_pParent;
+}
+void CBase::PrintInLine() const
+{
+	if (IsRoot())
+		printf("%s", m_sName.c_str()); // вывод имени только корневого объекта
+
+	if (m_vecChildren.empty()) // у объекта нет подчинённых
+		return;
+
+	printf("\n%s", m_sName.c_str());
+
+	for (const auto pChild : m_vecChildren)
+		printf("  %s", pChild->m_sName.c_str()); // вывод имени подчинённых
+
+	for (const auto pChild : m_vecChildren)
+		pChild->PrintInLine();
 }
 
 bool CBase::HasChild(const std::string& sChildName) const
 {
-	return GetChildByName(sChildName);
-}
-
-bool CBase::IsReady() const
-{
-	return m_iReadiness != 0;
+	return GetChildByName(sChildName); // поиск объекта по имени
 }
 
 CBase* CBase::GetRootObject()
 {
-	if (IsRoot())
-		return this;
-	return GetParent()->GetRootObject();
- }
+	return (IsRoot()) ? this : GetParent()->GetRootObject(); // проверка если текущий объект корень
+}
 
 int CBase::CountObjectsByName(const std::string& sName) const
 {
-	int count = 0;
+	int iCount = 0; // колличество найденных объектов
 
 	if (m_sName == sName)
-		count++;
+		iCount++;
 
 	for (const auto pObj : m_vecChildren)
-		count += pObj->CountObjectsByName(sName);
+		iCount += pObj->CountObjectsByName(sName);
 
-	return count;
+	return iCount;
 }
 
 void CBase::SetReadiness(int iReadyStatus)
 {
-	if (iReadyStatus and !ChainOfSubordinatesIsReady())
+	// избегаем ситуации когда объект готов
+	// а вышестоящие объекты не готовы
+	if (iReadyStatus && !ChainOfSubordinatesIsReady())
 		return;
 
 	m_iReadiness = iReadyStatus;
 
-	if (!iReadyStatus)
+	// если объект не готов то и нижестоящии объекты тоже должны потерять готовность
+	if (!IsReady())
 		for (auto pObject : m_vecChildren)
 			pObject->SetReadiness(iReadyStatus);
 
 }
-
-CBase* CBase::FindObjectByName(const std::string& sName)
+CBase* CBase::FindObjectByName(const std::string& sName) // рекурсивный поиск
 {
 	if (m_sName == sName)
 		return this;
@@ -138,68 +117,79 @@ CBase* CBase::FindObjectByName(const std::string& sName)
 	for (const auto pObject : m_vecChildren)
 	{
 		auto res = pObject->FindObjectByName(sName);
-
 		if (res)
 			return res;
+
 	}
 	return nullptr;
 }
-
 CBase* CBase::FindObjectFromCurrentObject(const std::string& sName)
 {
-	return (CountObjectsByName(sName) > 1) ? nullptr : FindObjectByName(sName);
+	return (CountObjectsByName(sName) > 1) ? nullptr : FindObjectByName(sName); // поиск объекта локально
 }
 
 CBase* CBase::FindObjectFromRoot(const std::string& sName)
 {
-	return GetRootObject()->FindObjectFromCurrentObject(sName);
+	return GetRootObject()->FindObjectFromCurrentObject(sName); // запуск поиска от корня
 }
-
 bool CBase::ChainOfSubordinatesIsReady() const
 {
+	// проверяем каждый вышестоящий объект на готовность
 	for (auto pObj = GetParent(); pObj; pObj = pObj->GetParent())
 		if (!pObj->IsReady())
 			return false;
 	return true;
 }
-
-CBase* CBase::GetObjectByPath(const std::string& sPath)
+void CBase::PrintMultyLineWithReadiness(size_t depth) const
 {
-	if (sPath.empty())
+	std::string space(depth*4, ' '); // отступ
+	printf((IsRoot()) ? "%s%s %s" : "\n%s%s %s", space.c_str(), m_sName.c_str(), (IsReady()) ? "is ready" : "is not ready"); // индикатор готовности
+
+	for (const auto pChild : m_vecChildren)
+		pChild->PrintMultyLineWithReadiness(depth+1);
+}
+void CBase::PrintMultyLine(size_t depth) const
+{
+	std::string space(depth*4, ' '); // отступ
+	printf((IsRoot()) ? "%s%s" : "\n%s%s", space.c_str(), m_sName.c_str()); // вывод имени объекта
+
+	for (const auto pChild : m_vecChildren)
+		pChild->PrintMultyLine(depth+1);
+}
+CBase* CBase::GetObjectByPath(const std::string& sPath) // получить объект по пути
+{
+	if (sPath.empty()) // пусть пустой
 		return nullptr;
 
-	if (sPath == ".")
+	if (sPath == ".") // . - вернуть текущий
 		return this;
 
-	if (sPath.front() == '.')
-		return FindObjectFromCurrentObject({ sPath.begin() + 1, sPath.end()});
+	if (sPath.front() == '.') // поиск от текущего
+		return FindObjectFromCurrentObject({sPath.begin()+1, sPath.end()});
 
-	if (sPath.rfind("//") == 0)
-		return FindObjectFromRoot({ sPath.begin() + 2, sPath.end()});
-
+	if (sPath.find("//") == 0) // поиск от корня
+		return FindObjectFromRoot({sPath.begin()+2, sPath.end()});
 
 	auto pCurrentObject = (sPath.front() == '/') ? GetRootObject() : this;
 
-	for (const  auto& sNameOfNextObject : utils::SplitString(sPath, "/"))
+	for (const auto& sNameOfNextObject : utils::SplitString(sPath, "/"))
 	{
 		if (sNameOfNextObject.empty())
 			continue;
 
-		pCurrentObject = pCurrentObject->GetChildByName(sNameOfNextObject);
+		pCurrentObject = pCurrentObject->GetChildByName(sNameOfNextObject); // получение следующего объекта по имени в пути
 
 		if (!pCurrentObject) return nullptr;
 	}
-	return pCurrentObject;
+
+	return pCurrentObject; // вернуть конечный объект
 }
 
-void CBase::RemoveChildByName(const std::string& sName)
+bool CBase::TransferOwnershipTo(CBase* pNewOwner) // переопределить головоной объект
 {
-	m_vecChildren.erase(std::remove(m_vecChildren.begin(), m_vecChildren.end(), GetChildByName(sName)), m_vecChildren.end());
-}
-
-bool CBase::TransferOwnershipTo(CBase* pNewOwner)
-{
-	if (IsRoot() or pNewOwner->HasChild(m_sName) or pNewOwner->PathContainsObject(this))
+	// объект не корень и путь до нового
+	// головного объекта не содержит текущий
+	if (IsRoot() || pNewOwner->HasChild(m_sName) || pNewOwner->PathContainsObject(this))
 		return false;
 
 	GetParent()->RemoveChildByName(m_sName);
@@ -208,35 +198,92 @@ bool CBase::TransferOwnershipTo(CBase* pNewOwner)
 	return true;
 }
 
-std::string CBase::GetAbsolutePath() const
+void CBase::RemoveChildByName(const std::string& sName)
 {
-	if (IsRoot()) return "/";
-	std::string path;
+	m_vecChildren.erase(std::remove(m_vecChildren.begin(), m_vecChildren.end(), GetChildByName(sName)), m_vecChildren.end());
 
-
-	for (auto pCurrent = this; !pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
-		path = "/" + pCurrent->m_sName + path;
-
-	return path;
 }
-
-void CBase::DeleteChildByName(const std::string& sName)
+bool CBase::PathContainsObject(CBase* pObject) const // проверка есть ли объект в пути до текущего
 {
-	auto tmp = GetChildByName(sName);
-	RemoveChildByName(sName);
 
-	delete tmp;
-}
-
-bool CBase::PathContainsObject(CBase* pObject) const
-{
 	for (auto pCurrent = this; !pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
 		if (pCurrent == pObject)
 			return true;
 	return false;
+
+}
+std::string CBase::GetAbsolutePath() const // получение абсолютного пути
+{
+	if (IsRoot()) return "/"; // если корень то путь "/"
+
+	std::string path;
+
+	for (auto pCurrent = this; !pCurrent->IsRoot(); pCurrent = pCurrent->GetParent())
+		path = "/" + pCurrent->m_sName + path; // добавление части к пути
+
+	return path;
+}
+void CBase::DeleteChildByName(const std::string& sChildName)
+{
+	auto tmp = GetChildByName(sChildName); // сохраняем объект на удаление
+	RemoveChildByName(sChildName); // отвязываем объект
+
+	delete tmp; // освобождение памяти
 }
 
 bool CBase::IsNameIsNotCausePathConflict(const std::string& sName)
 {
 	return sName.find('/') == std::string::npos;
+}
+
+void CBase::HandleSignal(const std::string& sText) const
+{
+	printf("Signal to %s Text:  %s", GetAbsolutePath().c_str(),sText.c_str());
+}
+
+void CBase::EmitSignal(TYPE_SIGNAL pSignal, std::string& sCommand)
+{
+	if (!IsReady())
+		return;
+
+	(this->*pSignal)(sCommand);
+
+	for (const auto& connection : m_vecConnections)
+	{
+		if (connection.m_pSignal != pSignal)
+			continue;
+
+		auto pHandle = connection.m_pTypeHandler;
+
+		if (connection.m_pTargetObject->IsReady())
+			(connection.m_pTargetObject->*pHandle) (sCommand);
+	}
+}
+
+void CBase::SetConnection(TYPE_SIGNAL pSignal, CBase* pObject, TYPE_HANDLER pHandle)
+{
+	if (std::find(m_vecConnections.begin(), m_vecConnections.end(),  connection_t(pSignal, pObject, pHandle)) == m_vecConnections.end())
+		m_vecConnections.emplace_back(pSignal, pObject, pHandle);
+}
+
+void CBase::TerminateConnection(TYPE_SIGNAL pSignal, CBase* pObject, TYPE_HANDLER pHandle)
+{
+	m_vecConnections.erase(std::remove(m_vecConnections.begin(), m_vecConnections.end(), connection_t(pSignal, pObject, pHandle)), m_vecConnections.end());
+}
+
+bool connection_t::operator==(const connection_t& other) const
+{
+	return m_pTargetObject == other.m_pTargetObject and m_pSignal == other.m_pSignal and m_pTypeHandler == other.m_pTypeHandler;
+}
+
+connection_t::connection_t(TYPE_SIGNAL pSignal, CBase* pBase, TYPE_HANDLER pTypeHandler)
+{
+	m_pSignal       = pSignal;
+	m_pTargetObject = pBase;
+	m_pTypeHandler  = pTypeHandler;
+}
+
+bool connection_t::operator!=(const connection_t& other) const
+{
+	return !(*this == other);
 }

@@ -8,6 +8,23 @@
 #include <string>
 #include <vector>
 
+class CBase;
+
+
+typedef void (CBase::*TYPE_SIGNAL) ( std::string& );
+typedef void (CBase::*TYPE_HANDLER) (const std::string& );
+
+
+struct connection_t
+{
+	connection_t(TYPE_SIGNAL pSignal, CBase* pBase, TYPE_HANDLER pTypeHandler);
+	TYPE_SIGNAL  m_pSignal;
+	CBase*		 m_pTargetObject;
+	TYPE_HANDLER m_pTypeHandler;
+	bool operator==(const connection_t& other) const;
+	bool operator!=(const connection_t& other) const;
+};
+
 
 class CBase
 {
@@ -39,6 +56,13 @@ public:
 				  void        PrintMultyLineWithReadiness(size_t depth = 0) const;
 				  void 		  DeleteChildByName(const std::string& sName);
 	              void        SetReadiness(int iReadyStatus);
+				  [[nodiscard]] virtual     int GetObjectID()               const = 0;
+
+	              void		  HandleSignal(const std::string& sText)        const;
+
+				  void 		  EmitSignal(TYPE_SIGNAL pSignal, std::string& sCommand);
+				  void        SetConnection(TYPE_SIGNAL pSignal, CBase* pObject, TYPE_HANDLER pHandle);
+				  void 	      TerminateConnection(TYPE_SIGNAL pSignal, CBase* pObject, TYPE_HANDLER pHandle);
     ~CBase();
 
 private:
@@ -48,6 +72,9 @@ private:
 	[[nodiscard]] int		  CountObjectsByName(const std::string& sName) const;
 	[[nodiscard]] CBase*	  FindObjectByName(const std::string& sName);
 	[[nodiscard]] bool 		  ChainOfSubordinatesIsReady() const;
+	std::vector<connection_t> m_vecConnections;
+
+
 protected:
 	[[nodiscard]] static bool IsNameIsNotCausePathConflict(const std::string& sName);
 };

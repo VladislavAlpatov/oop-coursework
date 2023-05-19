@@ -10,6 +10,10 @@ class CObject3 : public  CBase
 {
 public:
 	CObject3(CBase* pParent, const std::string& sName);
+
+	int GetObjectID() const override;
+	void Signal(std::string& sText);
+	void Handle(const std::string& text);
 };
 
 

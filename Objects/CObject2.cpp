@@ -8,3 +8,18 @@ CObject2::CObject2(CBase* pParent, const std::string& sName) : CBase(pParent, sN
 {
 
 }
+
+int CObject2::GetObjectID() const
+{
+	return 2;
+}
+
+void CObject2::Signal(std::string& sText)
+{
+
+}
+
+void CObject2::Handle(const std::string& text)
+{
+
+}
