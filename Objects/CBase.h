@@ -58,9 +58,7 @@ public:
 	              void        SetReadiness(int iReadyStatus);
 				  [[nodiscard]] virtual     int GetObjectID()               const = 0;
 
-	              void		  HandleSignal(const std::string& sText)        const;
-
-				  void 		  EmitSignal(TYPE_SIGNAL pSignal, std::string& sCommand);
+	              void 		  EmitSignal(TYPE_SIGNAL pSignal, std::string& sCommand);
 				  void        SetConnection(TYPE_SIGNAL pSignal, CBase* pObject, TYPE_HANDLER pHandle);
 				  void 	      TerminateConnection(TYPE_SIGNAL pSignal, CBase* pObject, TYPE_HANDLER pHandle);
     ~CBase();

@@ -236,11 +236,6 @@ bool CBase::IsNameIsNotCausePathConflict(const std::string& sName)
 	return sName.find('/') == std::string::npos;
 }
 
-void CBase::HandleSignal(const std::string& sText) const
-{
-	printf("Signal to %s Text:  %s", GetAbsolutePath().c_str(),sText.c_str());
-}
-
 void CBase::EmitSignal(TYPE_SIGNAL pSignal, std::string& sCommand)
 {
 	if (!IsReady())
