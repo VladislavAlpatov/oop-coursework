@@ -233,6 +233,7 @@ TYPE_SIGNAL CApplication::GetObjectSignal(const CBase* pObject) const
 {
 	switch (pObject->GetObjectID())
 	{
+		case 1: return MAKE_SIGNAL(CApplication::Signal);
 		case 2: return MAKE_SIGNAL(CObject2::Signal);
 		case 3: return MAKE_SIGNAL(CObject3::Signal);
 		case 4: return MAKE_SIGNAL(CObject4::Signal);
@@ -246,6 +247,7 @@ TYPE_HANDLER CApplication::GetObjectHandle(const CBase* pObject) const
 {
 	switch (pObject->GetObjectID())
 	{
+	case 1: return MAKE_HANDLER(CApplication::Handle);
 	case 2: return MAKE_HANDLER(CObject2::Handle);
 	case 3: return MAKE_HANDLER(CObject3::Handle);
 	case 4: return MAKE_HANDLER(CObject4::Handle);
@@ -278,5 +280,16 @@ void CApplication::SetCondition(const std::string& sPathToTargetObject, int iCon
 	}
 
 	pObject->SetReadiness(iCondition);
+}
+
+void CApplication::Signal(std::string& sText)
+{
+	sText += " (class: 1)";
+	printf("Signal from %s\n", GetAbsolutePath().c_str());
+}
+
+void CApplication::Handle(const std::string& text)
+{
+	printf("Signal to %s Text: %s\n", GetAbsolutePath().c_str(), text.c_str());
 }
 

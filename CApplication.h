@@ -12,6 +12,8 @@ public:
     CApplication();
     void BuildTree();
     int ExecApp();
+	void Signal(std::string& sText);
+	void Handle(const std::string& text);
 	[[nodiscard]] int GetObjectID() const override;
 private:
 	CBase* CreateObjectByNumber(int iNumber, CBase* pHead, const std::string& sName) const;
