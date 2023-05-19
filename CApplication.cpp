@@ -90,7 +90,6 @@ int CApplication::ExecApp()
 {
 	printf("Object tree\n");
 	PrintMultyLine();
-
 	CBase* pCurrentObject = this;
 	while (true)
 	{
@@ -146,9 +145,23 @@ int CApplication::ExecApp()
 
 			SetCondition(sPathToObject, iStateValue);
 		}
+		else if (sCommandName == "SET_CONNECT")
+		{
+			std::string sPathToSignalObject;
+			std::string sPathToHandlerObject;
+
+			std::cin >> sPathToSignalObject >> sPathToHandlerObject;
+			SetConnect(sPathToSignalObject, sPathToHandlerObject);
+		}
+		else if (sCommandName == "DELETE_CONNECT")
+		{
+			std::string sPathToSignalObject;
+			std::string sPathToHandlerObject;
+
+			std::cin >> sPathToSignalObject >> sPathToHandlerObject;
+			DeleteConnect(sPathToSignalObject, sPathToHandlerObject);
+		}
 	}
-	printf("Current object hierarchy tree\n");
-	PrintMultyLine();
     return 0;
 }
 
@@ -291,5 +304,41 @@ void CApplication::Signal(std::string& sText)
 void CApplication::Handle(const std::string& text)
 {
 	printf("\nSignal to %s Text: %s", GetAbsolutePath().c_str(), text.c_str());
+}
+
+void CApplication::SetConnect(const std::string& sPathToSignal, const std::string& sPathToHandler)
+{
+	const auto pObject        = GetObjectByPath(sPathToSignal);
+	const auto pHandlerObject = GetObjectByPath(sPathToHandler);
+
+	if (!pObject)
+	{
+		printf("Object %s not found\n", sPathToSignal.c_str());
+		return;
+	}
+	if (!pHandlerObject)
+	{
+		printf("Handler object %s not found\n", sPathToHandler.c_str());
+		return;
+	}
+	pObject->SetConnection(GetObjectSignal(pObject), pHandlerObject, GetObjectHandle(pHandlerObject));
+}
+
+void CApplication::DeleteConnect(const std::string& sPathToSignal, const std::string& sPathToHandler)
+{
+	const auto pObject        = GetObjectByPath(sPathToSignal);
+	const auto pHandlerObject = GetObjectByPath(sPathToHandler);
+
+	if (!pObject)
+	{
+		printf("Object %s not found\n", sPathToSignal.c_str());
+		return;
+	}
+	if (!pHandlerObject)
+	{
+		printf("Handler object %s not found\n", sPathToHandler.c_str());
+		return;
+	}
+	pObject->TerminateConnection(GetObjectSignal(pObject), pHandlerObject, GetObjectHandle(pHandlerObject));
 }
 

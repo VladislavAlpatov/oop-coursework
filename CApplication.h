@@ -23,6 +23,8 @@ private:
 	void SetCurrentObject(CBase*& pObject,const std::string& sPathToObject);
 	void EmitSignalForObject(const std::string& sPathToTargetObject, std::string sText);
 	void SetCondition(const std::string& sPathToTargetObject, int iCondition);
+	void SetConnect(const std::string& sPathToSignal, const std::string& sPathToHandler);
+	void DeleteConnect(const std::string& sPathToSignal, const std::string& sPathToHandler);
 	TYPE_SIGNAL  GetObjectSignal(const CBase* pObject) const;
 	TYPE_HANDLER GetObjectHandle(const CBase* pObject) const;
 
