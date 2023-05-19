@@ -40,7 +40,7 @@ CBase::CBase(CBase* pParent,const std::string& sName)
 {
 	m_pParent = pParent;
 	m_sName = sName;
-	m_iReadiness = 1; // объекты не готовы поумолчанию
+	m_iReadiness = 0; // объекты не готовы поумолчанию
 
 	if (!IsRoot()) // если объект будет иметь подчинителя
 		m_pParent->m_vecChildren.push_back(this);

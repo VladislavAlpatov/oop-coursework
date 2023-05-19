@@ -22,7 +22,7 @@ CApplication::CApplication() : CBase(nullptr, "RootObject")
 void CApplication::BuildTree()
 {
     std::cin >> m_sName;
-
+	m_iReadiness = 1;
 
     while (true)
     {
@@ -53,7 +53,8 @@ void CApplication::BuildTree()
 			continue;
 		}
 
-		CreateObjectByNumber(iClassType, pHeadObject, sNewObjectName);
+		CreateObjectByNumber(iClassType, pHeadObject, sNewObjectName)->SetReadiness(1);
+
 	}
 	while (true)
 	{
