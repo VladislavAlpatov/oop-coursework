@@ -7,23 +7,8 @@
 
 #include <string>
 #include <vector>
+#include "connection_t.h"
 
-class CBase;
-
-
-typedef void (CBase::*TYPE_SIGNAL) ( std::string& );
-typedef void (CBase::*TYPE_HANDLER) (const std::string& );
-
-
-struct connection_t
-{
-	connection_t(TYPE_SIGNAL pSignal, CBase* pBase, TYPE_HANDLER pTypeHandler);
-	TYPE_SIGNAL  m_pSignal;
-	CBase*		 m_pTargetObject;
-	TYPE_HANDLER m_pTypeHandler;
-	bool operator==(const connection_t& other) const;
-	bool operator!=(const connection_t& other) const;
-};
 
 
 class CBase

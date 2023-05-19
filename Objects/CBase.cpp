@@ -265,20 +265,3 @@ void CBase::TerminateConnection(TYPE_SIGNAL pSignal, CBase* pObject, TYPE_HANDLE
 {
 	m_vecConnections.erase(std::remove(m_vecConnections.begin(), m_vecConnections.end(), connection_t(pSignal, pObject, pHandle)), m_vecConnections.end());
 }
-
-bool connection_t::operator==(const connection_t& other) const
-{
-	return m_pTargetObject == other.m_pTargetObject and m_pSignal == other.m_pSignal and m_pTypeHandler == other.m_pTypeHandler;
-}
-
-connection_t::connection_t(TYPE_SIGNAL pSignal, CBase* pBase, TYPE_HANDLER pTypeHandler)
-{
-	m_pSignal       = pSignal;
-	m_pTargetObject = pBase;
-	m_pTypeHandler  = pTypeHandler;
-}
-
-bool connection_t::operator!=(const connection_t& other) const
-{
-	return !(*this == other);
-}

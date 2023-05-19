@@ -1,1 +1,1 @@
-target_sources(oop_coursework PRIVATE CBase.cpp CObject2.cpp CObject3.cpp CObject4.cpp CObject5.cpp CObject6.cpp)
+target_sources(oop_coursework PRIVATE CBase.cpp CObject2.cpp CObject3.cpp CObject4.cpp CObject5.cpp CObject6.cpp connection_t.cpp)
