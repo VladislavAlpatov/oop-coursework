@@ -90,7 +90,6 @@ int CApplication::ExecApp()
 {
 	printf("Object tree\n");
 	PrintMultyLine();
-	printf("\n");
 
 	CBase* pCurrentObject = this;
 	while (true)
@@ -286,11 +285,11 @@ void CApplication::SetCondition(const std::string& sPathToTargetObject, int iCon
 void CApplication::Signal(std::string& sText)
 {
 	sText += " (class: 1)";
-	printf("Signal from %s\n", GetAbsolutePath().c_str());
+	printf("\nSignal from %s", GetAbsolutePath().c_str());
 }
 
 void CApplication::Handle(const std::string& text)
 {
-	printf("Signal to %s Text: %s\n", GetAbsolutePath().c_str(), text.c_str());
+	printf("\nSignal to %s Text: %s", GetAbsolutePath().c_str(), text.c_str());
 }
 

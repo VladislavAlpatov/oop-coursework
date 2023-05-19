@@ -17,11 +17,11 @@ int CObject3::GetObjectID() const
 void CObject3::Signal(std::string& sText)
 {
 	sText += " (class: 3)";
-	printf("Signal from %s\n", GetAbsolutePath().c_str());
+	printf("\nSignal from %s", GetAbsolutePath().c_str());
 
 }
 
 void CObject3::Handle(const std::string& text)
 {
-	printf("Signal to %s Text: %s\n", GetAbsolutePath().c_str(), text.c_str());
+	printf("\nSignal to %s Text: %s", GetAbsolutePath().c_str(), text.c_str());
 }
